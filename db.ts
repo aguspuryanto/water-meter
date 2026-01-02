@@ -39,6 +39,17 @@ export const db = {
     return JSON.parse(data);
   },
 
+  saveResident: (resident: Omit<Resident, 'id'>) => {
+    const residents = db.getResidents();
+    const newResident: Resident = {
+      ...resident,
+      id: crypto.randomUUID()
+    };
+    residents.push(newResident);
+    localStorage.setItem(RESIDENTS_KEY, JSON.stringify(residents));
+    return newResident;
+  },
+
   getReadings: (): MeterReading[] => {
     const data = localStorage.getItem(READINGS_KEY);
     return data ? JSON.parse(data) : [];
