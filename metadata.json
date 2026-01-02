@@ -1,0 +1,5 @@
+{
+  "name": "WaterMeter - Sistem Pencatat Meteran Air Warga",
+  "description": "Aplikasi manajemen meteran air untuk lingkungan warga dengan fitur dashboard statistik, estimasi pendapatan, dan pencatatan bulanan yang mendukung penyimpanan lokal.",
+  "requestFramePermissions": []
+}
