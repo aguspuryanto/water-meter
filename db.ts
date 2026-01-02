@@ -29,10 +29,9 @@ const DEFAULT_RESIDENTS: Resident[] = [
   { id: 'r22', houseNumber: 'B28', name: 'P. Eko' },
 ];
 
-// Helper to generate seed data from the spreadsheet image
 const generateInitialReadings = (): MeterReading[] => {
-  const year = 2025;
-  const prevYear = 2024;
+  const currentYear = new Date().getFullYear();
+  const prevYear = currentYear - 1;
   const readings: MeterReading[] = [];
 
   const rawData: Record<string, { base: number, values: (number|null)[] }> = {
@@ -61,23 +60,23 @@ const generateInitialReadings = (): MeterReading[] => {
   };
 
   Object.entries(rawData).forEach(([resId, data]) => {
-    // Seed Desember 2023 (Base)
+    // Seed Desember tahun lalu (Base)
     readings.push({
       id: `seed-${resId}-base`,
       residentId: resId,
-      month: 11, // Desember
+      month: 11,
       year: prevYear,
       value: data.base
     });
 
-    // Seed 2024 months
+    // Seed tahun ini
     data.values.forEach((val, monthIdx) => {
       if (val !== null) {
         readings.push({
           id: `seed-${resId}-${monthIdx}`,
           residentId: resId,
           month: monthIdx,
-          year: year,
+          year: currentYear,
           value: val
         });
       }
@@ -99,10 +98,7 @@ export const db = {
 
   saveResident: (resident: Omit<Resident, 'id'>) => {
     const residents = db.getResidents();
-    const newResident: Resident = {
-      ...resident,
-      id: crypto.randomUUID()
-    };
+    const newResident: Resident = { ...resident, id: crypto.randomUUID() };
     residents.push(newResident);
     localStorage.setItem(RESIDENTS_KEY, JSON.stringify(residents));
     return newResident;
@@ -123,13 +119,11 @@ export const db = {
     const existingIndex = readings.findIndex(
       (r) => r.residentId === reading.residentId && r.month === reading.month && r.year === reading.year
     );
-
     if (existingIndex > -1) {
       readings[existingIndex] = { ...readings[existingIndex], value: reading.value };
     } else {
       readings.push({ ...reading, id: crypto.randomUUID() });
     }
-
     localStorage.setItem(READINGS_KEY, JSON.stringify(readings));
   },
 
